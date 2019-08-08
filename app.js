@@ -8,25 +8,47 @@ const session = require('express-session');
 const accounts = require('./userDB.js');
 const credentials = require('./credentials.js');
 
+const { OAuth2Client } = require('google-auth-library');
 const app = express();
 app.engine('handlebars', handlebars.engine);
 
 app.set('port', process.argv[2] || 4231);
 app.set('view engine', 'handlebars');
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(session({secret: credentials.secret}));
+app.use(session({ secret: credentials.secret }));
 app.use(express.static('public'));
 
 /**
  * Landing Page
  */
+app.get('/login', (req, res, next) => {
+  res.render('sign-in');
+});
+app.post('/tokensignin', async (req, res, next) => {
+  const client = new OAuth2Client(
+    '985046115919-771ojevgk5dn3gr32pkaq91v3d3quk20.apps.googleusercontent.com',
+  );
+
+  const userid = await verify(client, req.body.idtoken);
+  session.userId = userid;
+  res.redirect('/');
+});
+app.use((req, res, next) => {
+  console.log(session.userId);
+  if (session.userId) {
+    console.log('HERE!', req);
+    next();
+  } else {
+    res.redirect('login');
+  }
+});
 app.get('/', (req, res, next) => {
   const context = {};
   context.sample_text = 'Menu';
-  res.render('menu',context);
+  res.render('menu', context);
 });
 
 /**
@@ -38,34 +60,31 @@ app.post('/', (req, res, next) => {
   // if(req.body.token is not session.username's token) return;
   ////
   if (req.body.action === 'addAccount') {
-    accounts.addAccount(req.body,
-        (err, rows) => {
-          if (err) {
-            next(err);
-            return;
-          }
-          res.send(rows[0]);
-        });
+    accounts.addAccount(req.body, (err, rows) => {
+      if (err) {
+        next(err);
+        return;
+      }
+      res.send(rows[0]);
+    });
   } else if (req.body.action === 'deleteAccount') {
-    accounts.deleteAccount(req.body.rowIndex,
-        (err, result, field) => {
-          if (err) {
-            next(err);
-            return;
-          }
-          console.log('Deleted ' + result.affectedRows + ' row');
-          res.sendStatus(200);
-        });
+    accounts.deleteAccount(req.body.rowIndex, (err, result, field) => {
+      if (err) {
+        next(err);
+        return;
+      }
+      console.log('Deleted ' + result.affectedRows + ' row');
+      res.sendStatus(200);
+    });
   } else if (req.body.action === 'updateAccount') {
-    accounts.updateAccount(req.body,
-        (err, result) => {
-          if (err) {
-            next(err);
-            return;
-          }
-          console.log('Updated ' + result.affectedRows + ' row');
-          res.sendStatus(200);
-        });
+    accounts.updateAccount(req.body, (err, result) => {
+      if (err) {
+        next(err);
+        return;
+      }
+      console.log('Updated ' + result.affectedRows + ' row');
+      res.sendStatus(200);
+    });
   }
 });
 
@@ -77,7 +96,6 @@ app.use((req, res) => {
   res.status(404);
   res.render('404');
 });
-
 
 /**
  * Handle 500 Error -
@@ -91,5 +109,21 @@ app.use((err, req, res) => {
 });
 
 app.listen(app.get('port'), () => {
-  console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
+  console.log(
+    'Express started on http://localhost:' +
+      app.get('port') +
+      '; press Ctrl-C to terminate.',
+  );
 });
+
+async function verify(client, token) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience:
+      '985046115919-771ojevgk5dn3gr32pkaq91v3d3quk20.apps.googleusercontent.com',
+  });
+  const payload = ticket.getPayload();
+
+  const userid = payload['sub'];
+  return userid;
+}
