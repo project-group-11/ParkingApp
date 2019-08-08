@@ -26,7 +26,7 @@ app.get('/', (req, res, next) => {
 
 /**
  * Handle user database requests:
- * add, delete, and edit an account
+ * add, delete, and update an account
  */
 app.post('/', (req, res, next) => {
   //// VERIFY ACCOUNT HERE ////
@@ -51,7 +51,7 @@ app.post('/', (req, res, next) => {
           console.log('Deleted ' + result.affectedRows + ' row');
           res.sendStatus(200);
         });
-  } else if (req.body.action === 'editAccount') {
+  } else if (req.body.action === 'updateAccount') {
     accounts.updateAccount(req.body,
         (err, result) => {
           if (err) {
