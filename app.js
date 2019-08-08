@@ -3,8 +3,6 @@ const handlebars = require('express-handlebars').create({
   defaultLayout: 'main',
 });
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
 
 const app = express();
 app.engine('handlebars', handlebars.engine);
@@ -14,25 +12,15 @@ app.set('view engine', 'handlebars');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(session({secret: "Yz1phIjvWxQrSt90dEf2UKlbC678MnAO"}));
 app.use(express.static('public'));
 
 /**
  * Landing Page
  */
 app.get('/', (req, res, next) => {
-  if (session.page_views){
-    const context = {};
-    session.page_views++;
-    context.sample_text = `Page visited ${session.page_views} times this session.`;
-    res.render('menu',context);
-  } else {
-    const context = {};
-    session.page_views = 1;
-    context.sample_text = 'Beginning Session.';
-    res.render('menu',context);
-  }
+  const context = {};
+  context.sample_text = 'Menu';
+  res.render('menu',context);
 });
 
 /**
