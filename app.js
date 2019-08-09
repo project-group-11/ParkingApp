@@ -3,7 +3,10 @@ const handlebars = require('express-handlebars').create({
   defaultLayout: 'main',
 });
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const accounts = require('./userDB.js');
+const credentials = require('./credentials.js');
 
 const app = express();
 app.engine('handlebars', handlebars.engine);
@@ -13,6 +16,8 @@ app.set('view engine', 'handlebars');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(session({secret: credentials.secret}));
 app.use(express.static('public'));
 
 /**

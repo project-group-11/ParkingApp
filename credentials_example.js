@@ -8,4 +8,5 @@ module.exports = {
   host: 'classmysql.engr.oregonstate.edu',
   password: '<last 4 digits of their OSU ID>',
   servername: 'cs361_<your ONID user name>',
+  secret: 'secret random string',
 };
