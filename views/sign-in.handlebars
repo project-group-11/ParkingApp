@@ -1,0 +1,17 @@
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
+<meta name="google-signin-client_id" content="985046115919-771ojevgk5dn3gr32pkaq91v3d3quk20.apps.googleusercontent.com">
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+<script>
+    function onSignIn(googleUser) {
+        let id_token = googleUser.getAuthResponse().id_token;
+        console.log(id_token)
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:4231/tokensignin');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            console.log('Signed in as: ' + xhr.responseText);
+        };
+        xhr.send('idtoken=' + id_token);
+    }
+</script>
