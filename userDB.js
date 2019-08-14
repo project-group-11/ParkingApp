@@ -17,12 +17,14 @@ const db = mysql.createPool({
 const table = {
   name: 'parkingUsers',
   labels: ['id', 'token', 'username', 'img_url', 'official'],
-  createString: `CREATE table parkingUsers(`+
-  'id INT AUTO_INCREMENT,'+
-  'token VARCHAR(255) NOT NULL,'+
-  'username PRIMARY KEY VARCHAR(255) NOT NULL,'+
-  'img_url VARCHAR(255) NOT NULL,'+
-  'official BOOLEAN)',
+  createString: `CREATE TABLE parkingUsers (
+  id INT NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL,
+  img_url VARCHAR(255) DEFAULT NULL,
+  official BOOLEAN NOT NULL DEFAULT '0',
+  distance INT NOT NULL DEFAULT '10',
+  time INT NOT NULL DEFAULT '15')`,
 };
 
 /**
