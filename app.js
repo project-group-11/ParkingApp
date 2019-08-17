@@ -21,34 +21,62 @@ app.use(cookieParser());
 app.use(session({ secret: credentials.secret }));
 app.use(express.static('public'));
 
-/**
- * Landing Page
- */
 app.get('/login', (req, res, next) => {
   res.render('sign-in');
 });
+
 app.post('/tokensignin', async (req, res, next) => {
   const client = new OAuth2Client(
     '985046115919-771ojevgk5dn3gr32pkaq91v3d3quk20.apps.googleusercontent.com',
   );
 
-  const userid = await verify(client, req.body.idtoken);
-  session.userId = userid;
-  res.redirect('/');
+  const user = await verify(client, req.body.idtoken);
+  Object.assign(session, user);
+  res.redirect('/home');
 });
+
 app.use((req, res, next) => {
-  console.log(session.userId);
-  if (session.userId) {
-    console.log('HERE!', req);
+  //console.log(session.username);
+  if (session.username) {
+    //console.log('HERE!', req);
     next();
   } else {
     res.redirect('login');
   }
 });
-app.get('/', (req, res, next) => {
+
+app.get('/home', (req, res, next) => {
   const context = {};
-  context.sample_text = 'Menu';
-  res.render('menu', context);
+  context.title = 'Parking App';
+  context.script_path = 'scripts/server.js';
+  context.slogan = true;
+  res.render('home', context);
+});
+
+app.get('/find-space', (req, res, next) => {
+  const context = {};
+  context.title = 'Find A Space';
+  res.render('find-space', context);
+});
+
+app.get('/current-space', (req, res, next) => {
+  const context = {};
+  context.title = 'Current Space';
+  res.render('current-space', context);
+});
+
+app.get('/account-info', (req, res, next) => {
+  const context = {};
+  context.title = 'Account Info';
+  context.username = session.username;
+  context.img_url = session.img_url;
+  res.render('account-info', context);
+});
+
+app.get('/app-settings', (req, res, next) => {
+  const context = {};
+  context.title = 'App Settings';
+  res.render('app-settings', context);
 });
 
 /**
@@ -124,6 +152,10 @@ async function verify(client, token) {
   });
   const payload = ticket.getPayload();
 
-  const userid = payload['sub'];
-  return userid;
+  const user = {
+    token: payload.sub,
+    username: payload.name,
+    img_url: payload.picture,
+  };
+  return user;
 }

@@ -9,9 +9,12 @@
   <title>{{title}}</title>
   {{/if}}
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" type="text/css" media="screen" href="styles/main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="styles/style.css" />
   {{#if stylesheet_path}}
   <link rel="stylesheet" type="text/css" media="screen" href={{stylesheet_path}} />
+  {{/if}}
+  {{#if script_path}}
+  <script src={{script_path}}></script>
   {{/if}}
 </head>
 
