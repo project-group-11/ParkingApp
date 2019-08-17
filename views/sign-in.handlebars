@@ -13,5 +13,11 @@
             console.log('Signed in as: ' + xhr.responseText);
         };
         xhr.send('idtoken=' + id_token);
+        var a = document.createElement('a');
+        var linkText = document.createTextNode("Take me to the Parking App!");
+        a.appendChild(linkText);
+        a.title = "Parking App";
+        a.href = "http://localhost:4231/home";
+        document.body.appendChild(a);
     }
 </script>

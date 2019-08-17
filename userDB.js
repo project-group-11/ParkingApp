@@ -127,6 +127,19 @@ const isOfficial = (token) => {
   return true;
 };
 
+/**
+ * Get user settings
+ * @param {String/Number} token - account's id token
+ * @param {Function} callback
+ */
+const getSettings = (token, callback) => {
+  db.query('SELECT *'
+    +` FROM ${table.name}`
+    +' WHERE token=?',
+  [token],
+  callback);
+};
+
 module.exports = {
   addAccount: addAccount,
   deleteAccount: deleteAccount,

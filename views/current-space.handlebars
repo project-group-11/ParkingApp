@@ -1,0 +1,48 @@
+{{> header}}
+
+{{> menu}}
+
+<h1> Current Space Info <h1>
+
+    <p> Here is an example of the time alert </p>
+    <div class="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      This is an alert box. You have XX time left on your parking spot.
+    </div>
+
+    <p> time left: </p>
+
+    <p> Add time: click and then a popup will appear and prompt you for the amount of time you would like to add in
+      minutes.</p>
+
+
+    <!-- Trigger/Open The Modal -->
+    <button id="addTimeBtn">Add Time to Parking</button>
+
+    <!-- The Modal -->
+    <div id="timeModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h2>Extend parking (in minutes)</h2>
+        </div>
+        <div class="modal-body">
+          <form action="">
+            Extend parking :
+            <input type="number" name="addTime" value="0">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <h3>Click to add time to parking spot</h3>
+          <button id="addTimeBtn">Add Time</button>
+        </div>
+      </div>
+
+    </div>
+
+
+
+
+    {{> footer}}
